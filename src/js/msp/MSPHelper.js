@@ -318,6 +318,11 @@ MspHelper.prototype.process_data = function (dataHandler) {
                                 index: i,
                                 ioTag: ioTag,
                                 pin: ioTag ? this.ioTagToPin(ioTag) : "NONE",
+                                timer: null,
+                                channel: null,
+                                complementary: false,
+                                dmaController: null,
+                                dmaStream: null,
                             });
                         }
                         for (let i = 0; i < servoCount; i++) {
@@ -326,7 +331,36 @@ MspHelper.prototype.process_data = function (dataHandler) {
                                 index: i,
                                 ioTag: ioTag,
                                 pin: ioTag ? this.ioTagToPin(ioTag) : "NONE",
+                                timer: null,
+                                channel: null,
+                                complementary: false,
+                                dmaController: null,
+                                dmaStream: null,
                             });
+                        }
+
+                        // Optional trailing block: per-resource {timer, channel, dmaCode}
+                        // 3 bytes per entry, motors then servos. Older firmware omits
+                        // this block (payload ends after the ioTags), so we gate the
+                        // read on payload length and skip if not present.
+                        const expectedExtras = (motorCount + servoCount) * 3;
+                        const remaining = data.byteLength - data.offset;
+                        if (remaining >= expectedExtras && expectedExtras > 0) {
+                            const decodeExtras = (resource) => {
+                                const timer = data.readU8();
+                                const channelByte = data.readU8();
+                                const dmaCode = data.readU8();
+                                resource.timer = timer || null;
+                                resource.channel = channelByte & 0x0f || null;
+                                resource.complementary = (channelByte & 0x80) !== 0;
+                                resource.dmaController = dmaCode >> 4 || null;
+                                resource.dmaStream = dmaCode & 0x0f;
+                                if (resource.dmaController === null) {
+                                    resource.dmaStream = null;
+                                }
+                            };
+                            for (const resource of FC.MOTOR_RESOURCES) decodeExtras(resource);
+                            for (const resource of FC.SERVO_RESOURCES) decodeExtras(resource);
                         }
                     }
                     break;

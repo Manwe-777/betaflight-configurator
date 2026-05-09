@@ -3137,7 +3137,31 @@
         "message": "To change pin assignments in CLI, use resource MOTOR <index> <pin> or resource SERVO <index> <pin> (e.g., resource MOTOR 1 A08 or resource SERVO 1 A08)."
     },
     "servosResourceEditHint": {
-        "message": "Select a pin from the dropdown to reassign motor or servo outputs. Changes are applied immediately but require Save and a reboot to take effect."
+        "message": "Select a pin from the dropdown to stage a reassignment. Pending edits are applied on Save and require a reboot to take effect. The configurator remembers the last pin seen per motor/servo slot for this board (stored locally on your computer) so you can restore a released output without the CLI. This is not the factory default — only a hint from prior connects."
+    },
+    "servosResourceNoneHint": {
+        "message": "Release this output (no pad assigned)."
+    },
+    "servosResourcePending": {
+        "message": "{{count}} pending"
+    },
+    "servosResourceRevert": {
+        "message": "Revert"
+    },
+    "servosResourceSaved": {
+        "message": "Resource assignments saved. Reboot the flight controller for the changes to take effect."
+    },
+    "servosResourceSaveFailed": {
+        "message": "Failed to apply one or more resource assignments. The flight controller may be in a partially-reconfigured state."
+    },
+    "servosResourceWarningSeverity_error": {
+        "message": "ERROR"
+    },
+    "servosResourceWarningSeverity_warn": {
+        "message": "WARN"
+    },
+    "servosResourceWarningSeverity_info": {
+        "message": "INFO"
     },
     "gpsHead": {
         "message": "General"
